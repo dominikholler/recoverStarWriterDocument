@@ -44,8 +44,8 @@ static const uint8_t gEncode[] =
 void Encrypt(const char* aEncrypted, char* aBuffer, uint32_t aLen, const char* mPassword) {
   size_t nCryptPtr = 0;
   uint8_t cBuf[maxPWLen];
-  memcpy(cBuf, mPassword, maxPWLen);
   uint8_t* p = cBuf;
+  memcpy(cBuf, mPassword, maxPWLen);
 
   if (!aLen)
     aLen = strlen(aEncrypted);
@@ -65,8 +65,8 @@ void Encrypt(const char* aEncrypted, char* aBuffer, uint32_t aLen, const char* m
 int SetPassword(const char* aPassword, const uint8_t mFilePass[maxPWLen], const char* needle) {
   // Set the new password
   char pw[maxPWLen];
-  memcpy(pw, aPassword, maxPWLen);
   char mPassword[maxPWLen];
+  memcpy(pw, aPassword, maxPWLen);
 
   // the password needs to be encrypted
   memcpy(mPassword, gEncode, maxPWLen);
@@ -296,7 +296,7 @@ nestedFor(15)
       if (SetPassword(lguess, cPasswd, needle))
     {
       printf("%s\n",lguess);
-      exit(EXIT_SUCCESS);
+      //exit(EXIT_SUCCESS);
     }
   ltries++;
 

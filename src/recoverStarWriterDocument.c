@@ -104,13 +104,272 @@ void initTable(char* table, int tableSize)
   }
 }
 
+#ifdef _OPENMP
+
+/* multi core optimized */
+void recover(const uint32_t nDate, const uint32_t nTime, const uint8_t cPasswd[maxPWLen])
+{
+  {
+    int i0;
+    volatile int tries = 0;
+#define TABLE_SIZE (26+1)
+    char table[TABLE_SIZE];
+    char needle[maxPWLen+1];
+    info("MAX_TRY_LEN: %d\n", MAX_TRY_LEN);
+    sprintf(needle, "%08x%08x", nDate, nTime);
+    initTable(table, TABLE_SIZE);
+#pragma omp parallel for
+    for (i0 = 0; i0 < TABLE_SIZE; ++i0)
+    {
+      /* if compiled with OpenMP, worker threads starts here */
+      int i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15;
+      int ltries=0;
+      char lguess[maxPWLen+1];
+      strcpy(lguess, "       el       ");
+      lguess[0] = table[i0];
+      info("i%2d: starting with index: %2d: %s\n", 0, i0, lguess);
+#define nestedFor(N) for (i##N = 0; i##N < TABLE_SIZE; ++ i##N ) {\
+  lguess[N] = table[i##N];
+#define nestedFor_i(N) nestedFor(N) \
+ info("i%2d: starting with index: %2d: %s\n", N, i##N, lguess);
+
+#if MAX_TRY_LEN > 1
+nestedFor(1)
+#endif
+
+#if MAX_TRY_LEN > 2
+nestedFor(2)
+#endif
+
+#if MAX_TRY_LEN > 3
+nestedFor(3)
+#endif
+
+#if MAX_TRY_LEN > 4
+nestedFor(4)
+#endif
+
+#if MAX_TRY_LEN > 5
+nestedFor(5)
+#endif
+
+#if MAX_TRY_LEN > 6
+nestedFor(6)
+#endif
+
+#if MAX_TRY_LEN > 7
+nestedFor(7)
+#endif
+
+#if MAX_TRY_LEN > 8
+nestedFor(8)
+#endif
+
+#if MAX_TRY_LEN > 9
+nestedFor(9)
+#endif
+
+#if MAX_TRY_LEN > 10
+nestedFor(10)
+#endif
+
+#if MAX_TRY_LEN > 11
+nestedFor(11)
+#endif
+
+#if MAX_TRY_LEN > 12
+nestedFor(12)
+#endif
+
+#if MAX_TRY_LEN > 13
+nestedFor(13)
+#endif
+
+#if MAX_TRY_LEN > 14
+nestedFor(14)
+#endif
+
+#if MAX_TRY_LEN > 15
+nestedFor(15)
+#endif
+
+      if (SetPassword(lguess, cPasswd, needle))
+    {
+      printf("%s\n",lguess);
+      exit(EXIT_SUCCESS);
+    }
+  ltries++;
+
+#if MAX_TRY_LEN > 15
+}
+#endif
+
+#if MAX_TRY_LEN > 14
+}
+#endif
+
+#if MAX_TRY_LEN > 13
+}
+#endif
+
+#if MAX_TRY_LEN > 12
+}
+#endif
+
+#if MAX_TRY_LEN > 11
+}
+#endif
+
+#if MAX_TRY_LEN > 10
+}
+#endif
+
+#if MAX_TRY_LEN > 9
+}
+#endif
+
+#if MAX_TRY_LEN > 8
+}
+#endif
+
+#if MAX_TRY_LEN > 7
+}
+#endif
+
+#if MAX_TRY_LEN > 6
+}
+#endif
+
+#if MAX_TRY_LEN > 5
+}
+#endif
+
+#if MAX_TRY_LEN > 4
+}
+#endif
+
+#if MAX_TRY_LEN > 3
+}
+#endif
+
+#if MAX_TRY_LEN > 2
+}
+#endif
+
+#if MAX_TRY_LEN > 1
+}
+#endif
+
+#pragma omp atomic
+tries+=ltries;
+} /* 0 */
+printf("tries: %d\n", tries);
+  }
+
+}
+
+#else /* _OPENMP */
+
+/* single core optimized */
+void recover(const uint32_t nDate, const uint32_t nTime, const uint8_t cPasswd[maxPWLen])
+{
+
+  {
+    int i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15;
+    long long tries = 0;
+#define TABLE_SIZE (26+1)
+    char table[TABLE_SIZE];
+    char needle[maxPWLen+1];
+    char guess[maxPWLen+1];
+    strcpy(guess, "                ");
+    sprintf(needle, "%08x%08x", nDate, nTime);
+    initTable(table, TABLE_SIZE);
+
+#define nestedFor(N) for (i##N = 0; i##N < TABLE_SIZE; ++ i##N ) {\
+  guess[N] = table[i##N];
+
+  nestedFor(15)
+
+  nestedFor(14)
+
+  nestedFor(13)
+
+  nestedFor(12)
+
+  nestedFor(11)
+
+  nestedFor(10)
+
+  nestedFor(9)
+
+  nestedFor(8)
+
+  nestedFor(7)
+
+  nestedFor(6)
+      printf("%lld: '%s'\n",tries, guess);
+
+  nestedFor(5)
+
+  nestedFor(4)
+
+  nestedFor(3)
+
+  nestedFor(2)
+
+  nestedFor(1)
+
+  nestedFor(0)
+
+      if (SetPassword(guess, cPasswd, needle))
+    {
+      printf("%lld: '%s': SUCCESS\n",tries, guess);
+      exit(EXIT_SUCCESS);
+    }
+  tries++;
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+}
+
+} 
+  }
+}
+#endif /* _OPENMP */
+
+
 int main(int argc, const char* argv[])
 {
   /* per StarWriterDocument globals */
   uint8_t cPasswd[maxPWLen]; // password verification data
   uint32_t nDate;
   uint32_t nTime;
-  info("MAX_TRY_LEN: %d\n", MAX_TRY_LEN);
 
   {
     const char* inputFilePath;
@@ -210,162 +469,8 @@ int main(int argc, const char* argv[])
     fclose(inputFile);
   }
 
-  {
-    int i0;
-    volatile int tries = 0;
-#define TABLE_SIZE (26+1)
-    char table[TABLE_SIZE];
-    char needle[maxPWLen+1];
-    sprintf(needle, "%08x%08x", nDate, nTime);
-    initTable(table, TABLE_SIZE);
-#pragma omp parallel for
-    for (i0 = 0; i0 < TABLE_SIZE; ++i0)
-    {
-      /* if compiled with OpenMP, worker threads starts here */
-      int i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15;
-      int ltries=0;
-      char lguess[maxPWLen+1];
-      strcpy(lguess, "       el       ");
-      lguess[0] = table[i0];
-      info("i%2d: starting with index: %2d: %s\n", 0, i0, lguess);
-#define nestedFor(N) for (i##N = 0; i##N < TABLE_SIZE; ++ i##N ) {\
-  lguess[N] = table[i##N];
-#define nestedFor_i(N) nestedFor(N) \
- info("i%2d: starting with index: %2d: %s\n", N, i##N, lguess);
 
-#if MAX_TRY_LEN > 1
-nestedFor(1)
-#endif
-
-#if MAX_TRY_LEN > 2
-nestedFor(2)
-#endif
-
-#if MAX_TRY_LEN > 3
-nestedFor(3)
-#endif
-
-#if MAX_TRY_LEN > 4
-nestedFor(4)
-#endif
-
-#if MAX_TRY_LEN > 5
-nestedFor(5)
-#endif
-
-#if MAX_TRY_LEN > 6
-nestedFor(6)
-#endif
-
-#if MAX_TRY_LEN > 7
-nestedFor(7)
-#endif
-
-#if MAX_TRY_LEN > 8
-nestedFor(8)
-#endif
-
-#if MAX_TRY_LEN > 9
-nestedFor(9)
-#endif
-
-#if MAX_TRY_LEN > 10
-nestedFor(10)
-#endif
-
-#if MAX_TRY_LEN > 11
-nestedFor(11)
-#endif
-
-#if MAX_TRY_LEN > 12
-nestedFor(12)
-#endif
-
-#if MAX_TRY_LEN > 13
-nestedFor(13)
-#endif
-
-#if MAX_TRY_LEN > 14
-nestedFor(14)
-#endif
-
-#if MAX_TRY_LEN > 15
-nestedFor(15)
-#endif
-
-      if (SetPassword(lguess, cPasswd, needle))
-    {
-      printf("%s\n",lguess);
-      //exit(EXIT_SUCCESS);
-    }
-  ltries++;
-
-#if MAX_TRY_LEN > 15
-}
-#endif
-
-#if MAX_TRY_LEN > 14
-}
-#endif
-
-#if MAX_TRY_LEN > 13
-}
-#endif
-
-#if MAX_TRY_LEN > 12
-}
-#endif
-
-#if MAX_TRY_LEN > 11
-}
-#endif
-
-#if MAX_TRY_LEN > 10
-}
-#endif
-
-#if MAX_TRY_LEN > 9
-}
-#endif
-
-#if MAX_TRY_LEN > 8
-}
-#endif
-
-#if MAX_TRY_LEN > 7
-}
-#endif
-
-#if MAX_TRY_LEN > 6
-}
-#endif
-
-#if MAX_TRY_LEN > 5
-}
-#endif
-
-#if MAX_TRY_LEN > 4
-}
-#endif
-
-#if MAX_TRY_LEN > 3
-}
-#endif
-
-#if MAX_TRY_LEN > 2
-}
-#endif
-
-#if MAX_TRY_LEN > 1
-}
-#endif
-
-#pragma omp atomic
-tries+=ltries;
-} /* 0 */
-printf("tries: %d\n", tries);
-  }
-
+  recover(nDate, nTime, cPasswd);
   
   return EXIT_FAILURE;
 }

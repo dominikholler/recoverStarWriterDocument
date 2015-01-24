@@ -85,22 +85,34 @@ int SetPassword(const char* aPassword, const uint8_t mFilePass[maxPWLen], const 
   return TRUE;
 }
 
+void addCharToTable(char* table, int tableSize, char charToAdd, int* index)
+{
+  if (*index < tableSize)
+  {
+    table[*index] = charToAdd;
+    (*index)++;
+  }
+  else
+  {
+    error("index out of bounds");
+  }
+}
+
 void initTable(char* table, int tableSize)
 {
   int c;
   int index=0;
+#define TABLE_SIZE (26+26+1)
   table[index++] = ' ';
+  /* A-Z */
+  for(c=0x41; c<=0x5a; c++)
+  {
+    addCharToTable(table, tableSize, c, &index);
+  }
+  /* a-z */
   for(c=0x61; c<=0x7a; c++)
   {
-    if (index < tableSize)
-    {
-      table[index] = c;
-      index++;
-    }
-    else
-    {
-      error("index out of bounds");
-    }
+    addCharToTable(table, tableSize, c, &index);
   }
 }
 
@@ -112,7 +124,6 @@ void recover(const uint32_t nDate, const uint32_t nTime, const uint8_t cPasswd[m
   {
     int i0;
     volatile int tries = 0;
-#define TABLE_SIZE (26+1)
     char table[TABLE_SIZE];
     char needle[maxPWLen+1];
     info("MAX_TRY_LEN: %d\n", MAX_TRY_LEN);
@@ -277,7 +288,6 @@ void recover(const uint32_t nDate, const uint32_t nTime, const uint8_t cPasswd[m
   {
     int i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15;
     long long tries = 0;
-#define TABLE_SIZE (26+1)
     char table[TABLE_SIZE];
     char needle[maxPWLen+1];
     char guess[maxPWLen+1];

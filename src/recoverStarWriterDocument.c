@@ -102,7 +102,7 @@ void initTable(char* table, int tableSize)
 {
   int c;
   int index=0;
-#define TABLE_SIZE (26+26+1)
+#define TABLE_SIZE (1+26+26+9)
   table[index++] = ' ';
   /* A-Z */
   for(c=0x41; c<=0x5a; c++)
@@ -111,6 +111,11 @@ void initTable(char* table, int tableSize)
   }
   /* a-z */
   for(c=0x61; c<=0x7a; c++)
+  {
+    addCharToTable(table, tableSize, c, &index);
+  }
+  /* 0-9 */
+  for(c=0x30; c<=0x39; c++)
   {
     addCharToTable(table, tableSize, c, &index);
   }
@@ -136,7 +141,7 @@ void recover(const uint32_t nDate, const uint32_t nTime, const uint8_t cPasswd[m
       int i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11,i12,i13,i14,i15;
       int ltries=0;
       char lguess[maxPWLen+1];
-      strcpy(lguess, "       el       ");
+      strcpy(lguess, "                ");
       lguess[0] = table[i0];
       info("i%2d: starting with index: %2d: %s\n", 0, i0, lguess);
 #define nestedFor(N) for (i##N = 0; i##N < TABLE_SIZE; ++ i##N ) {\

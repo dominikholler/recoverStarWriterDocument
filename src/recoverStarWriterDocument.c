@@ -102,7 +102,7 @@ void initTable(char* table, int tableSize)
 {
   int c;
   int index=0;
-#define TABLE_SIZE (1+26+26+9)
+#define TABLE_SIZE (1+26+26+10)
   table[index++] = ' ';
   /* A-Z */
   for(c=0x41; c<=0x5a; c++)
